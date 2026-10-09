@@ -1,6 +1,54 @@
+# Keep in the repo: build.sbt,
+# project/build.properties,
+# project/plugins.sbt, .scalafmt.conf
+
+# sbt: build output
+target/
+project/project/
+project/boot/
+project/plugins/project/
+project/local-plugins.sbt
+local.sbt
+lib_managed/
+src_managed/
+dist/*
+.history
+
+# BSP / Bloop / Metals
+.bsp/
+.bloop/
+.metals/
+.ammonite/
+metals.sbt
+
+# scala-cli
+.scala-build/
+
+# compiler output
 *.class
 *.tasty
-*.log
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# logs & JVM crash dumps
+*.log
 hs_err_pid*
+replay_pid*
+
+# IntelliJ IDEA / JetBrains
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Build-Output
+out/
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Lokale Historie (oft durch Extensions erstellt)
+.history/
