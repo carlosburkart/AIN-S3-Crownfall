@@ -1,5 +1,16 @@
 @main def hello(): Unit =
-  println("Hello world!")
-  println(msg)
+  val grid =
+    """
+      |   A B C D E F G H
+      |  . . . . . . . . .
+      |1 . . . . . . . . .
+      |2 . . . . . . . . .
+      |3 . . . . . . . . .
+      |4 . . . . . . . . .
+      |5 . . . . . . . . .
+      |6 . . . . . . . . .
+      |7 . . . . . . . . .
+      |8 . . . . . . . . .""".stripMargin
 
-def msg = "I was compiled by Scala 3. :)"
+  println("Willkommen im Spiel")
+  println(grid)
