@@ -1,3 +1,5 @@
+package crownfall
+
 @main def hello(): Unit =
   val grid =
     """
