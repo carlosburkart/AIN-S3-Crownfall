@@ -1,8 +1,47 @@
-## sbt project compiled with Scala 3
+# Crownfall
 
-### Usage
+Ein rundenbasiertes Strategiespiel für zwei Spieler, entwickelt in Scala 3 im Rahmen der Vorlesung Software Engineering.
 
-This is a normal sbt project. You can compile code with `sbt compile`, run it with `sbt run`, and `sbt console` will start a Scala 3 REPL.
+## Spielidee
 
-For more information on the sbt-dotty plugin, see the
-[scala3-example-project](https://github.com/scala/scala3-example-project/blob/main/README.md).
+Zwei Armeen aus Nahkampf- und Fernkampfeinheiten treten auf einem 8×8-Spielfeld gegeneinander an. Ähnlich wie beim Schach ziehen die Spieler abwechselnd. Anders als beim Schach haben Einheiten Werte wie Lebenspunkte, Angriff und Reichweite und können teils aus der Entfernung angreifen. Gewonnen hat, wer die gegnerische Armee vollständig besiegt.
+
+## Voraussetzungen
+
+- JDK 17 oder neuer
+- [sbt](https://www.scala-sbt.org/)
+
+## Starten
+
+```
+sbt run
+```
+
+## Tests ausführen
+
+```
+sbt test
+```
+
+Mit Testabdeckung (Coverage):
+
+```
+sbt clean coverage test coverageReport
+```
+
+Der Bericht liegt danach unter `target/scala-<version>/scoverage-report/index.html`.
+
+## Projektstruktur
+
+```
+src/main/scala/crownfall/
+├── model/        Spiellogik: Spielfeld, Einheiten, Regeln
+├── controller/   Verbindet Eingaben mit der Spiellogik
+├── aview/        Darstellung: Text (tui) und Grafik (gui)
+└── util/         Hilfsklassen
+```
+
+## Team
+
+- Mamoon Akhter
+- Carlos Burkart
