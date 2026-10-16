@@ -1,0 +1,29 @@
+# Ablage im Repo: .github/workflows/scala.yml
+# Führt bei jedem Push und Pull Request auf main/develop die Tests aus.
+
+name: Scala CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Java einrichten
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: sbt
+
+      - name: sbt einrichten
+        uses: sbt/setup-sbt@v1
+
+      - name: Tests mit Coverage
+        run: sbt clean coverage test coverageReport
