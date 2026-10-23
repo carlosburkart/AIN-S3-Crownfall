@@ -1,5 +1,6 @@
 package crownfall
 
+// $COVERAGE-OFF$
 @main def hello(): Unit =
   val grid =
     """
@@ -16,3 +17,4 @@ package crownfall
 
   println("Willkommen im Spiel")
   println(grid)
+  // $COVERAGE-ON$
