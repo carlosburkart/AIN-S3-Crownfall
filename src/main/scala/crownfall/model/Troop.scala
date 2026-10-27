@@ -10,3 +10,7 @@ case class Troop(id: Int, owner: Side, kind: TroopKind, hp: Int):
 
   def isDefeated: Boolean =
     hp == 0
+    
+object Troop:
+  def create(id: Int, owner: Side, kind: TroopKind): Troop =
+    Troop(id, owner, kind, kind.maxHp)

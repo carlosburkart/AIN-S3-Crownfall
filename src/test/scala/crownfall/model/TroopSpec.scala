@@ -54,4 +54,9 @@ class TroopSpec extends AnyWordSpec with Matchers:
         troop.takeDamage(-1)
       }
     }
+
+    "be created with the full hp of its kind" in {
+      val archer = Troop.create(1, Side.One, TroopKind.Archer)
+      archer.hp should be(TroopKind.Archer.maxHp)
+    }
   }
