@@ -1,20 +1,14 @@
 package crownfall
 
-// $COVERAGE-OFF$
-@main def hello(): Unit =
-  val grid =
-    """
-      |   A B C D E F G H
-      |  . . . . . . . . .
-      |1 . . . . . . . . .
-      |2 . . . . . . . . .
-      |3 . . . . . . . . .
-      |4 . . . . . . . . .
-      |5 . . . . . . . . .
-      |6 . . . . . . . . .
-      |7 . . . . . . . . .
-      |8 . . . . . . . . .""".stripMargin
+import crownfall.aview.tui.*
+import crownfall.model.*
 
-  println("Willkommen im Spiel")
-  println(grid)
+// $COVERAGE-OFF$
+  @main def hello(): Unit =
+    println()
+    println("---------------------")
+    println("Welcome to Crownfall!")
+    println("---------------------")
+    println()
+    Tui.run(Board.initial)
   // $COVERAGE-ON$
