@@ -27,7 +27,7 @@ class BoardRendererSpec extends AnyWordSpec with Matchers:
         """  A B C
           |2 . . .
           |1 . . .""".stripMargin
-      val result = BoardRenderer.render(board)
+      val result = BoardRenderer.render(board, useColor = false)
       result should be(expected)
     }
 
@@ -41,7 +41,26 @@ class BoardRendererSpec extends AnyWordSpec with Matchers:
         """  A B C
           |2 . . k
           |1 K . .""".stripMargin
-      val result = BoardRenderer.render(board)
+      val result = BoardRenderer.render(board, useColor = false)
       result should be(expected)
+    }
+
+    "color troops of side One blue" in {
+      val troop = Troop.create(1, Side.One, TroopKind.Knight)
+      val result = BoardRenderer.coloredSymbol(troop)
+      result should be(Console.BLUE + "K" + Console.RESET)
+    }
+
+    "color troops of side Two red" in {
+      val troop = Troop.create(2, Side.Two, TroopKind.Knight)
+      val result = BoardRenderer.coloredSymbol(troop)
+      result should be(Console.RED + "k" + Console.RESET)
+    }
+
+    "render troops in color by default" in {
+      val troop = Troop.create(1, Side.One, TroopKind.Knight)
+      val board = Board(3, 2, Map(Position(0, 0) -> troop))
+      val result = BoardRenderer.render(board)
+      result should include(BoardRenderer.coloredSymbol(troop))
     }
   }

@@ -10,19 +10,23 @@ object BoardRenderer:
       case TroopKind.Mage   => "M"
     if troop.owner == Side.One then letter else letter.toLowerCase
 
-  def render(board: Board): String =
+  def coloredSymbol(troop: Troop): String =
+    val color = if troop.owner == Side.One then Console.BLUE else Console.RED
+    color + symbol(troop) + Console.RESET
+
+  def render(board: Board, useColor: Boolean = true): String =
     val header = "  " + (0 until board.cols).map(col => ('A' + col).toChar.toString).mkString(" ")
-    val lines = (0 until board.rows).reverse.map(row => renderRow(board, row))
+    val lines = (0 until board.rows).reverse.map(row => renderRow(board, row, useColor))
     (header +: lines).mkString("\n")
 
-  private def renderRow(board: Board, row: Int): String =
+  private def renderRow(board: Board, row: Int, useColor: Boolean): String =
     val number = (row + 1).toString + " "
     val columns = 0 until board.cols
-    val cells = columns.map(col => cell(board, Position(col, row)))
+    val cells = columns.map(col => cell(board, Position(col, row), useColor))
     val joined = cells.mkString(" ")
     number + joined
 
-  private def cell(board: Board, pos: Position): String =
+  private def cell(board: Board, pos: Position, useColor: Boolean): String =
     board.troopAt(pos) match
       case None        => "."
-      case Some(troop) => symbol(troop)
+      case Some(troop) => if useColor then coloredSymbol(troop) else symbol(troop)
