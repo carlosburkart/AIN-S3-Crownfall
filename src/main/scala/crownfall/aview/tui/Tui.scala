@@ -1,6 +1,8 @@
 package crownfall.aview.tui
 
+import crownfall.controller.*
 import crownfall.model.*
+
 import scala.io.StdIn
 
 object Tui:

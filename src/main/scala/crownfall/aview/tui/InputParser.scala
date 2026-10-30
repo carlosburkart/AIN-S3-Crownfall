@@ -1,5 +1,6 @@
 package crownfall.aview.tui
 
+import crownfall.controller.*
 import crownfall.model.*
 
 object InputParser:

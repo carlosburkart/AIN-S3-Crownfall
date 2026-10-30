@@ -1,4 +1,4 @@
-package crownfall.aview.tui
+package crownfall.controller
 
 import crownfall.model.*
 
