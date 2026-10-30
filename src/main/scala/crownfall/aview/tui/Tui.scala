@@ -8,12 +8,31 @@ object Tui:
   def run(board: Board): Unit =
     println(BoardRenderer.render(board))
     println()
+    println(BoardRenderer.legend)
+    println()
     val input = StdIn.readLine("> ")
     InputParser.parseCommand(input) match
       case Some(Command.Quit) =>
         println()
         println("Thank you for playing our first demo!")
         println()
+      case Some(Command.Help) =>
+        println()
+        println("Commands:")
+        println("> move <from> <to>")
+        println("> info <field>")
+        println("> help")
+        println("> quit")
+        println()
+        run(board)
+      case Some(Command.Info(pos)) =>
+        println()
+        board.troopAt(pos) match {
+          case Some(troop) => println(BoardRenderer.troopInfo(troop))
+          case None => println("No troop on this field")
+        }
+        println()
+        run(board)
       case Some(Command.Move(from, to)) =>
         board.move(from, to) match
           case Right(newBoard) =>

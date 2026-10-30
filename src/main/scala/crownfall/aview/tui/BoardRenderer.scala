@@ -30,3 +30,19 @@ object BoardRenderer:
     board.troopAt(pos) match
       case None        => "."
       case Some(troop) => if useColor then coloredSymbol(troop) else symbol(troop)
+
+  def troopInfo(troop: Troop): String =
+    val kind = troop.kind
+    val owner = troop.owner
+    val hp = troop.hp
+    val maxHp = troop.kind.maxHp
+    val atk = troop.kind.attack
+    val df = troop.kind.defense
+    val rng = troop.kind.range
+    val mov = troop.kind.movement
+    s"$kind (Side $owner) | HP $hp/$maxHp | ATK $atk | DEF $df | RNG $rng | MOV $mov"
+    
+  def legend: String =
+    TroopKind.values
+      .map(kind => s"${symbol(Troop.create(0, Side.One, kind))} = $kind")
+      .mkString(", ")

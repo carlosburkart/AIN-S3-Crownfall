@@ -63,4 +63,17 @@ class BoardRendererSpec extends AnyWordSpec with Matchers:
       val result = BoardRenderer.render(board)
       result should include(BoardRenderer.coloredSymbol(troop))
     }
+
+    "describe a troop with its stats" in {
+      val troop = Troop.create(1, Side.One, TroopKind.Knight)
+      val result = BoardRenderer.troopInfo(troop)
+      result should be("Knight (Side One) | HP 10/10 | ATK 4 | DEF 5 | RNG 1 | MOV 1")
+    }
+
+    "show a legend with all troop kinds" in {
+      val result = BoardRenderer.legend
+      result should include("K = Knight")
+      result should include("A = Archer")
+      result should include("M = Mage")
+    }
   }
