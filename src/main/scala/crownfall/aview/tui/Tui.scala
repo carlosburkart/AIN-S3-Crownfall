@@ -1,23 +1,47 @@
 package crownfall.aview.tui
 
-import crownfall.controller.*
-import crownfall.model.*
-
+import crownfall.controller.Command
+import crownfall.controller.Controller
+import crownfall.util.Observer
+import scala.annotation.tailrec
 import scala.io.StdIn
 
-object Tui:
+class Tui(controller: Controller) extends Observer:
   // $COVERAGE-OFF$
-  def run(board: Board): Unit =
-    println(BoardRenderer.render(board))
+  def update(): Unit =
+    println()
+    println(BoardRenderer.render(controller.board))
     println()
     println(BoardRenderer.legend)
     println()
-    val input = StdIn.readLine("> ")
+  // $COVERAGE-ON$
+
+  def processInput(input: String): Boolean =
     InputParser.parseCommand(input) match
       case Some(Command.Quit) =>
         println()
-        println("Thank you for playing our first demo!")
+        println("Thank you for playing the demo!")
         println()
+        false
+
+      case Some(Command.Move(from, to)) =>
+        controller.move(from, to) match
+          case Left(error) =>
+            println()
+            println(error)
+            println()
+          case Right(_) =>
+            ()
+        true
+
+      case Some(Command.Info(pos)) =>
+        println()
+        controller.board.troopAt(pos) match
+          case Some(troop) => println(BoardRenderer.troopInfo(troop))
+          case None => println("No troop on this field")
+        println()
+        true
+
       case Some(Command.Help) =>
         println()
         println("Commands:")
@@ -26,28 +50,17 @@ object Tui:
         println("> help")
         println("> quit")
         println()
-        run(board)
-      case Some(Command.Info(pos)) =>
-        println()
-        board.troopAt(pos) match {
-          case Some(troop) => println(BoardRenderer.troopInfo(troop))
-          case None => println("No troop on this field")
-        }
-        println()
-        run(board)
-      case Some(Command.Move(from, to)) =>
-        board.move(from, to) match
-          case Right(newBoard) =>
-            println()
-            run(newBoard)
-          case Left(error) =>
-            println()
-            println(error)
-            println()
-            run(board)
+        true
+
       case None =>
         println()
-        println("Unknown command: Use move <from> <to> or quit")
+        println("Unknown command. Type 'help' for a list of commands.")
         println()
-        run(board)
-// $COVERAGE-ON$
+        true
+
+  // $COVERAGE-OFF$
+  @tailrec
+  final def run(): Unit =
+    val input = StdIn.readLine("> ")
+    if processInput(input) then run()
+  // $COVERAGE-ON$

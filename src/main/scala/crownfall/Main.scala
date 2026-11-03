@@ -1,6 +1,7 @@
 package crownfall
 
 import crownfall.aview.tui.*
+import crownfall.controller.Controller
 import crownfall.model.*
 
 // $COVERAGE-OFF$
@@ -9,6 +10,9 @@ import crownfall.model.*
     println("---------------------")
     println("Welcome to Crownfall!")
     println("---------------------")
-    println()
-    Tui.run(Board.initial)
+    val controller = Controller(Board.initial)
+    val tui = Tui(controller)
+    controller.add(tui)
+    tui.update()
+    tui.run()
   // $COVERAGE-ON$
