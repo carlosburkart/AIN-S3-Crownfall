@@ -1,5 +1,6 @@
 package crownfall.aview.tui
 
+import crownfall.controller.*
 import crownfall.model.*
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
