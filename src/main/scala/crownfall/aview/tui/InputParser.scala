@@ -1,7 +1,7 @@
 package crownfall.aview.tui
 
-import crownfall.controller.*
-import crownfall.model.*
+import crownfall.controller.Command
+import crownfall.model.Position
 
 object InputParser:
 

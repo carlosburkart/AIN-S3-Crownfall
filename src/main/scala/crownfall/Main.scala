@@ -1,6 +1,6 @@
 package crownfall
 
-import crownfall.aview.tui.*
+import crownfall.aview.tui.Tui
 import crownfall.controller.Controller
 import crownfall.model.*
 
