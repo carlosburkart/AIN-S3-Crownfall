@@ -11,5 +11,6 @@ lazy val root = project
     Test /parallelExecution := false,
 
     libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.20",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.20" % "test"
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.20" % "test",
+    libraryDependencies += "com.tngtech.archunit" % "archunit" % "1.5.1" % Test
   )

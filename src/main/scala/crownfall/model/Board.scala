@@ -8,7 +8,6 @@ case class Board(cols: Int, rows: Int, troops: Map[Position, Troop]):
     pos.col >= 0 && pos.col < cols
       && pos.row >= 0 && pos.row < rows
 
-
   def troopAt(pos: Position): Option[Troop] =
     troops.get(pos)
 
