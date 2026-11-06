@@ -1,5 +1,6 @@
 # Ablage im Repo: .github/workflows/scala.yml
-# Führt bei jedem Push und Pull Request auf main/develop die Tests aus.
+# Führt bei jedem Push und Pull Request auf main/develop die Tests aus
+# und schickt bei Pull Requests und auf main die Ergebnisse an SonarQube.
 
 name: Scala CI
 
@@ -14,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Java einrichten
         uses: actions/setup-java@v5
@@ -23,7 +26,13 @@ jobs:
           cache: sbt
 
       - name: sbt einrichten
-        uses: sbt/setup-sbt@b113b960ba361e87e08ce02a390d51871b7ee459 # v1.5.131
+        uses: sbt/setup-sbt@b113b960ba361e87e08ce02a390d51871b7ee459 # v1.5.13
 
       - name: Tests mit Coverage
         run: sbt clean coverage test coverageReport
+
+      - name: SonarQube Scan
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+        uses: SonarSource/sonarqube-scan-action@e805d875275f728fac1885b413934be6d7c63f65 # v8.4.1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
