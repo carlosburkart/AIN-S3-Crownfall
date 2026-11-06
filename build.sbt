@@ -12,5 +12,5 @@ lazy val root = project
 
     libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.20",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.20" % "test",
-    libraryDependencies += "com.tngtech.archunit" % "archunit" % "1.4.1" % Test
+    libraryDependencies += "com.tngtech.archunit" % "archunit" % "1.5.1" % Test
   )
