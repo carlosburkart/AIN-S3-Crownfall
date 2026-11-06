@@ -1,5 +1,7 @@
 # Crownfall
 
+![Scala CI](https://github.com/carlosburkart/AIN-S3-Crownfall/actions/workflows/scala.yml/badge.svg) ![Quality Gate](https://github.com/carlosburkart/AIN-S3-Crownfall/actions/workflows/scala.yml/badge.svg) ![Coverage](https://github.com/carlosburkart/AIN-S3-Crownfall/actions/workflows/scala.yml/badge.svg)
+
 A turn-based strategy game for two players, written in Scala 3 for the Software Engineering course.
 
 ## Game Idea
