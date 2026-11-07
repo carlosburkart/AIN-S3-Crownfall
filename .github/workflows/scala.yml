@@ -42,3 +42,4 @@ jobs:
         with:
           file: target/scala-3.9.0/coverage-report/cobertura.xml
           format: cobertura
+          base-path: src/main/scala
