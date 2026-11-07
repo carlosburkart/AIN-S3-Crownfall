@@ -1,6 +1,6 @@
 # Crownfall
 
-![Scala CI](https://github.com/carlosburkart/AIN-S3-Crownfall/actions/workflows/scala.yml/badge.svg) [![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=carlosburkart_AIN-S3-Crownfall&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=carlosburkart_AIN-S3-Crownfall) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=carlosburkart_AIN-S3-Crownfall&metric=coverage)](https://sonarcloud.io/summary/new_code?id=carlosburkart_AIN-S3-Crownfall)
+![Scala CI](https://github.com/carlosburkart/AIN-S3-Crownfall/actions/workflows/scala.yml/badge.svg) [![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=carlosburkart_AIN-S3-Crownfall&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=carlosburkart_AIN-S3-Crownfall) [![Coverage Status](https://coveralls.io/repos/github/carlosburkart/AIN-S3-Crownfall/badge.svg)](https://coveralls.io/github/carlosburkart/AIN-S3-Crownfall)
 
 A turn-based strategy game for two players, written in Scala 3 for the Software Engineering course.
 
