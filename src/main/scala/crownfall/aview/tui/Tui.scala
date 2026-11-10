@@ -3,6 +3,7 @@ package crownfall.aview.tui
 import crownfall.controller.Command
 import crownfall.controller.Controller
 import crownfall.util.Observer
+import crownfall.model.GameError
 import scala.annotation.tailrec
 import scala.io.StdIn
 
@@ -28,7 +29,7 @@ class Tui(controller: Controller) extends Observer:
         controller.move(from, to) match
           case Left(error) =>
             println()
-            println(error)
+            println(BoardRenderer.errorMessage(error))
             println()
           case Right(_) =>
             ()
@@ -38,7 +39,7 @@ class Tui(controller: Controller) extends Observer:
         println()
         controller.board.troopAt(pos) match
           case Some(troop) => println(BoardRenderer.troopInfo(troop))
-          case None => println("No troop on this field")
+          case None => println(BoardRenderer.errorMessage(GameError.NoTroopThere))
         println()
         true
 

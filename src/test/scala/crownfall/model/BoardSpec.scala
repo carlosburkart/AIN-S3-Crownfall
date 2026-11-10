@@ -68,7 +68,7 @@ class BoardSpec extends AnyWordSpec with Matchers:
       val troop = Troop.create(1, Side.One, TroopKind.Archer)
       val board = Board(8, 8, Map(occupied -> troop))
       val result = board.move(empty, target)
-      result.isLeft should be(true)
+      result should be(Left(GameError.NoTroopThere))
     }
 
     "not move a troop outside the board" in {
@@ -77,7 +77,7 @@ class BoardSpec extends AnyWordSpec with Matchers:
       val troop = Troop.create(1, Side.One, TroopKind.Archer)
       val board = Board(8, 8, Map(start -> troop))
       val result = board.move(start, target)
-      result.isLeft should be(true)
+      result should be(Left(GameError.OutOfBounds))
     }
 
     "not move a troop on an occupied field" in {
@@ -87,7 +87,7 @@ class BoardSpec extends AnyWordSpec with Matchers:
       val blocker = Troop.create(2, Side.One, TroopKind.Knight)
       val board = Board(8, 8, Map(posMover -> mover, posBlocker -> blocker))
       val result = board.move(posMover, posBlocker)
-      result.isLeft should be(true)
+      result should be(Left(GameError.FieldOccupied))
     }
 
     "not move a troop further than its movement" in {
@@ -96,7 +96,7 @@ class BoardSpec extends AnyWordSpec with Matchers:
       val troop = Troop.create(1, Side.One, TroopKind.Mage)
       val board = Board(8, 8, Map(start -> troop))
       val result = board.move(start, target)
-      result.isLeft should be(true)
+      result should be(Left(GameError.OutOfRange))
     }
   }
 
