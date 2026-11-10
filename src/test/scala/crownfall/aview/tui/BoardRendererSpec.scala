@@ -75,5 +75,16 @@ class BoardRendererSpec extends AnyWordSpec with Matchers:
       result should include("K = Knight")
       result should include("A = Archer")
       result should include("M = Mage")
+      result should include(", ")
+    }
+
+    "have an error message for all GameErrors" in {
+      for error <- GameError.values do
+        BoardRenderer.errorMessage(error) should not be empty
+    }
+
+    "have a different message for every game error" in {
+      val messages = GameError.values.map(BoardRenderer.errorMessage)
+      messages.toSet.size should be(messages.size)
     }
   }
