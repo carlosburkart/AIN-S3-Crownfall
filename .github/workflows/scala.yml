@@ -1,6 +1,7 @@
 # Ablage im Repo: .github/workflows/scala.yml
 # Führt bei jedem Push und Pull Request auf main/develop die Tests aus
-# und schickt bei Pull Requests und auf main die Ergebnisse an SonarQube.
+# Testet automatisch auf Ubuntu und Windows.
+# SonarQube und Coveralls werden nur unter Ubuntu ausgeführt.
 
 name: Scala CI
 
@@ -15,8 +16,16 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    name: Test (${{ matrix.os }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
+
     steps:
       - uses: actions/checkout@v5
         with:
@@ -36,12 +45,13 @@ jobs:
         run: sbt clean coverage test coverageReport
 
       - name: SonarQube Scan
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+        if: matrix.os == 'ubuntu-latest' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main')
         uses: SonarSource/sonarqube-scan-action@e805d875275f728fac1885b413934be6d7c63f65 # v8.4.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Coveralls
+        if: matrix.os == 'ubuntu-latest'
         uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2.3.8
         with:
           file: target/scala-3.9.0/coverage-report/cobertura.xml
