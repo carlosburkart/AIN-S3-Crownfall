@@ -13,12 +13,12 @@ case class Board(cols: Int, rows: Int, troops: Map[Position, Troop]):
   def troopAt(pos: Position): Option[Troop] =
     troops.get(pos)
 
-  def move(from: Position, to: Position): Either[String, Board] =
+  def move(from: Position, to: Position): Either[GameError, Board] =
     troopAt(from) match
-      case None                                                     => Left("No troop available on this field")
-      case Some(_) if !isInside(to)                                 => Left("You can't move troops outside the board")
-      case Some(_) if troopAt(to).isDefined                         => Left("Another troop occupies this field")
-      case Some(troop) if from.distanceTo(to) > troop.kind.movement => Left("This troop can't move this far")
+      case None                                                     => Left(GameError.NoTroopThere)
+      case Some(_) if !isInside(to)                                 => Left(GameError.OutOfBounds)
+      case Some(_) if troopAt(to).isDefined                         => Left(GameError.FieldOccupied)
+      case Some(troop) if from.distanceTo(to) > troop.kind.movement => Left(GameError.OutOfRange)
       case Some(troop)                                              => Right(copy(troops = (troops - from) + (to -> troop)))
 
 object Board:

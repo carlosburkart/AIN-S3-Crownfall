@@ -9,7 +9,7 @@ class Controller(initialBoard: Board) extends Observable:
 
   def board: Board = current
 
-  def move(from: Position, to: Position): Either[String, Board] =
+  def move(from: Position, to: Position): Either[GameError, Board] =
     val result = current.move(from, to)
     result match
       case Right(newBoard) =>

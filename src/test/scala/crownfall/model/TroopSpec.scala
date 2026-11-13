@@ -13,6 +13,12 @@ class TroopSpec extends AnyWordSpec with Matchers:
       damaged.hp should be(7)
     }
 
+    "lose no hp if the damage is zero" in {
+      val troop = Troop.create(1, Side.One, TroopKind.Knight)
+      val damaged = troop.takeDamage(0)
+      damaged.hp should be(TroopKind.Knight.maxHp)
+    }
+
     "stay unchanged after taking damage" in {
       val troop = Troop(1, Side.One, TroopKind.Knight, 10)
       val damaged = troop.takeDamage(3)

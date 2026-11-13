@@ -46,3 +46,9 @@ object BoardRenderer:
     TroopKind.values
       .map(kind => s"${symbol(Troop.create(0, Side.One, kind))} = $kind")
       .mkString(", ")
+
+  def errorMessage(error: GameError): String = error match
+    case GameError.NoTroopThere  => "No troop available on this field."
+    case GameError.OutOfBounds   => "You can't move troops outside the board."
+    case GameError.FieldOccupied => "Another troop occupies this field."
+    case GameError.OutOfRange    => "This troop can't move this far."
