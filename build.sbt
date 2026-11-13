@@ -4,7 +4,7 @@ lazy val root = project
   .in(file("."))
   .settings(
     name := "Crownfall",
-    version := "0.1.0-SNAPSHOT",
+    version := "v0.3.0",
 
     scalaVersion := scala3Version,
 
