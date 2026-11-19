@@ -1,8 +1,5 @@
 package crownfall.model
 
-import java.net.Authenticator
-
-
 case class Board(cols: Int, rows: Int, troops: Map[Position, Troop]):
   require(cols > 0 && rows > 0, "A board must have a minimum of one column and one row")
   require(troops.keys.forall(isInside), "All troops must be placed inside the board")

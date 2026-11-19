@@ -37,5 +37,5 @@ object BoardRenderer:
     case GameError.OutOfRange    => "This troop can't move this far."
     case GameError.NoTarget      => "There is no troop to attack on this field."
     case GameError.OwnTroop      => "You can't attack your own troops."
-    case GameError.NotYourTurn   => "This troop belongs to the other player."
+    case GameError.NotYourTroop   => "This troop belongs to the other player."
     case GameError.GameIsOver    => "The game is already over."
