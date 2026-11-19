@@ -14,23 +14,6 @@ object BoardRenderer:
     val color = if troop.owner == Side.One then Console.BLUE else Console.RED
     color + symbol(troop) + Console.RESET
 
-  def render(board: Board, useColor: Boolean = true): String =
-    val header = "  " + (0 until board.cols).map(col => ('A' + col).toChar.toString).mkString(" ")
-    val lines = (0 until board.rows).reverse.map(row => renderRow(board, row, useColor))
-    (header +: lines).mkString("\n")
-
-  private def renderRow(board: Board, row: Int, useColor: Boolean): String =
-    val number = (row + 1).toString + " "
-    val columns = 0 until board.cols
-    val cells = columns.map(col => cell(board, Position(col, row), useColor))
-    val joined = cells.mkString(" ")
-    number + joined
-
-  private def cell(board: Board, pos: Position, useColor: Boolean): String =
-    board.troopAt(pos) match
-      case None        => "."
-      case Some(troop) => if useColor then coloredSymbol(troop) else symbol(troop)
-
   def troopInfo(troop: Troop): String =
     val kind = troop.kind
     val owner = troop.owner
@@ -46,9 +29,17 @@ object BoardRenderer:
     TroopKind.values
       .map(kind => s"${symbol(Troop.create(0, Side.One, kind))} = $kind")
       .mkString(", ")
+      
+  def stateInfo(state: GameState): String = state match
+    case Turn(side) => s"Side $side, it's your turn."
+    case GameOver(winner) => s"Side $winner wins the game!"
 
   def errorMessage(error: GameError): String = error match
     case GameError.NoTroopThere  => "No troop available on this field."
     case GameError.OutOfBounds   => "You can't move troops outside the board."
     case GameError.FieldOccupied => "Another troop occupies this field."
-    case GameError.OutOfRange    => "This troop can't move this far."
+    case GameError.OutOfRange    => "The target field is out of range."
+    case GameError.NoTarget      => "There is no troop to attack on this field."
+    case GameError.OwnTroop      => "You can't attack your own troops."
+    case GameError.NotYourTroop  => "This troop belongs to the other player."
+    case GameError.GameIsOver    => "The game is already over."
