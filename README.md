@@ -10,9 +10,7 @@ A turn-based strategy game for two players, written in Scala 3 for the Software 
 ## Game Idea
 
 Two armies of knights, archers and mages face each other on an 8×8 board. Similar to chess, the players move their troops across the board.
-
 Unlike chess, every troop has stats such as hit points, attack, defense, range and movement, and some troops can attack from a distance.
-
 The goal is to defeat the enemy army.
 
 ## Getting Started
@@ -95,9 +93,14 @@ Uppercase and lowercase letters are both accepted.
 | Command | Description |
 |---|---|
 | `move C2 C3` | Moves the troop on C2 to C3 |
+| `attack C2 C3` | The troop on C2 attacks the troop on C3 |
 | `info C2` | Shows the stats of the troop on C2 |
 | `help` | Lists all commands |
 | `quit` | Ends the game |
+
+### Turns
+
+Side One begins. In each turn, the player on turn performs one action: either `move` or `attack`. After that, it is the other player's turn. An action that is not allowed does not cost a turn.
 
 ### Movement Rules
 
@@ -109,6 +112,22 @@ A troop can only move if:
 
 If a move is not allowed, the game shows the reason and you can try again.
 
+### Attack Rules
+A troop can only attack if:
+
+- there is a troop on the target field.
+- the target belongs to the opponent.
+- the target is within its range (diagonal steps count as one field).
+
+The attacker stays on its field. The damage depends on the attack of the attacker and the defense of the target:
+
+```
+damage = attack × 5 / (defense + 5)
+```
+A defense of 5 halves the damage. A troop whose hit points drop to 0 is removed from the board.
+
+If an attack is not allowed, the game shows the reason and you can try again.
+
 ## Current State
 
 | Feature | Status |
@@ -116,8 +135,9 @@ If a move is not allowed, the game shows the reason and you can try again.
 | Board, troops and starting setup | Done |
 | Movement with rule checks | Done |
 | Text user interface | Done |
-| Combat (melee and ranged) | Planned |
-| Turns and win condition | Planned |
+| Combat (melee and ranged) | Done |
+| Turns and win condition | Done |
+ Undo | Planned |
 | Terrain | Planned |
 | Buildings to train and upgrade troops | Planned |
 | Graphical user interface with pixel art tiles | Planned |
@@ -127,8 +147,8 @@ If a move is not allowed, the game shows the reason and you can try again.
 ### Architecture
 
 Crownfall uses a layered MVC architecture with the observer pattern.
-
 The model is immutable, and the layer rules are checked automatically by tests.
+Besides the observer pattern, the code uses Strategy, State, Template Method and Chain of Responsibility.
 
 ```text
 src/main/scala/crownfall/
