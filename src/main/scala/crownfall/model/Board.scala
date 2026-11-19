@@ -1,5 +1,7 @@
 package crownfall.model
 
+import java.net.Authenticator
+
 
 case class Board(cols: Int, rows: Int, troops: Map[Position, Troop]):
   require(cols > 0 && rows > 0, "A board must have a minimum of one column and one row")
@@ -20,6 +22,20 @@ case class Board(cols: Int, rows: Int, troops: Map[Position, Troop]):
       case Some(_) if troopAt(to).isDefined                         => Left(GameError.FieldOccupied)
       case Some(troop) if from.distanceTo(to) > troop.kind.movement => Left(GameError.OutOfRange)
       case Some(troop)                                              => Right(copy(troops = (troops - from) + (to -> troop)))
+
+  def attack(from: Position, to: Position, strategy: DamageStrategy): Either[GameError, Board] =
+    (troopAt(from), troopAt(to)) match
+      case (None, _)                                                                                => Left(GameError.NoTroopThere)
+      case (_, None)                                                                                => Left(GameError.NoTarget)
+      case (Some(attacker), Some(defender)) if attacker.owner == defender.owner                     => Left(GameError.OwnTroop)
+      case (Some(attacker), Some(_))        if from.distanceTo(to) > attacker.kind.range            => Left(GameError.OutOfRange)
+      case (Some(attacker), Some(defender))                                                         =>
+        val causedDamage = strategy.damage(attacker, defender)
+        val damagedTroop = defender.takeDamage(causedDamage)
+        if damagedTroop.isDefeated then
+          Right(copy(troops = troops - to))
+        else
+          Right(copy(troops = troops + (to -> damagedTroop)))
 
 object Board:
   def initial: Board =
