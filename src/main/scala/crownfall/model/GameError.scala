@@ -1,4 +1,4 @@
 package crownfall.model
 
 enum GameError:
-  case NoTroopThere, OutOfBounds, FieldOccupied, OutOfRange
+  case NoTroopThere, OutOfBounds, FieldOccupied, OutOfRange, NoTarget, OwnTroop, NotYourTurn, GameIsOver

@@ -7,11 +7,11 @@ import crownfall.model.GameError
 import scala.annotation.tailrec
 import scala.io.StdIn
 
-class Tui(controller: Controller) extends Observer:
+class Tui(controller: Controller, renderer: Renderer = ColorRenderer()) extends Observer:
   // $COVERAGE-OFF$
   def update(): Unit =
     println()
-    println(BoardRenderer.render(controller.board))
+    println(renderer.render(controller.board))
     println()
     println(BoardRenderer.legend)
     println()

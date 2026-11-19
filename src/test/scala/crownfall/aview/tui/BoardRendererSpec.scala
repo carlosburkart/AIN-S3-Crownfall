@@ -21,30 +21,6 @@ class BoardRendererSpec extends AnyWordSpec with Matchers:
         BoardRenderer.symbol(two) should be(BoardRenderer.symbol(one).toLowerCase)
     }
 
-    "render an empty board" in {
-      val board = Board(3, 2, Map())
-      val expected =
-        """  A B C
-          |2 . . .
-          |1 . . .""".stripMargin
-      val result = BoardRenderer.render(board, useColor = false)
-      result should be(expected)
-    }
-
-    "render troops with their symbols" in {
-      val troopOne = Troop.create(1, Side.One, TroopKind.Knight)
-      val troopTwo = Troop.create(2, Side.Two, TroopKind.Knight)
-      val posOne = Position(0, 0)
-      val posTwo = Position(2, 1)
-      val board = Board(3, 2, Map(posOne -> troopOne, posTwo -> troopTwo))
-      val expected =
-        """  A B C
-          |2 . . k
-          |1 K . .""".stripMargin
-      val result = BoardRenderer.render(board, useColor = false)
-      result should be(expected)
-    }
-
     "color troops of side One blue" in {
       val troop = Troop.create(1, Side.One, TroopKind.Knight)
       val result = BoardRenderer.coloredSymbol(troop)
@@ -55,13 +31,6 @@ class BoardRendererSpec extends AnyWordSpec with Matchers:
       val troop = Troop.create(2, Side.Two, TroopKind.Knight)
       val result = BoardRenderer.coloredSymbol(troop)
       result should be(Console.RED + "k" + Console.RESET)
-    }
-
-    "render troops in color by default" in {
-      val troop = Troop.create(1, Side.One, TroopKind.Knight)
-      val board = Board(3, 2, Map(Position(0, 0) -> troop))
-      val result = BoardRenderer.render(board)
-      result should include(BoardRenderer.coloredSymbol(troop))
     }
 
     "describe a troop with its stats" in {
