@@ -14,12 +14,17 @@ object InputParser:
 
   def parseCommand(input: String): Option[Command] =
     input.trim.toLowerCase.split("\\s+").toList match
-      case List("quit")           => Some(Command.Quit)
-      case List("info", pos)      => parsePosition(pos).map(p => Command.Info(p))
-      case List("help")           => Some(Command.Help)
-      case List("move", from, to) =>
+      case List("quit")             => Some(Command.Quit)
+      case List("info", pos)        => parsePosition(pos).map(p => Command.Info(p))
+      case List("help")             => Some(Command.Help)
+      case List("move", from, to)   =>
         for
           start  <- parsePosition(from)
           target <- parsePosition(to)
         yield Command.Move(start, target)
-      case _                      => None
+      case List("attack", from, to) =>
+        for
+          start <- parsePosition(from)
+          target <- parsePosition(to)
+        yield Command.Attack(start, target)
+      case _                        => None

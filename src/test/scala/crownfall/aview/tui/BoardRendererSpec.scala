@@ -57,3 +57,19 @@ class BoardRendererSpec extends AnyWordSpec with Matchers:
       messages.toSet.size should be(messages.size)
     }
   }
+
+  "The state info" should {
+
+    "name the side that is on turn" in {
+      BoardRenderer.stateInfo(Turn(Side.One)) should include("One")
+      BoardRenderer.stateInfo(Turn(Side.Two)) should include("Two")
+    }
+
+    "name the winner when the game is over" in {
+      BoardRenderer.stateInfo(GameOver(Side.Two)) should include("Two")
+    }
+
+    "differ between a turn and the end of the game" in {
+      BoardRenderer.stateInfo(Turn(Side.One)) should not be (BoardRenderer.stateInfo(GameOver(Side.One)))
+    }
+  }

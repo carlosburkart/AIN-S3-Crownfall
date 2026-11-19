@@ -104,4 +104,22 @@ class InputParserSpec extends AnyWordSpec with Matchers:
       val result = InputParser.parseCommand(input)
       result should be(Some(Command.Help))
     }
+
+    "parse an attack command with two coordinates" in {
+      val input = "attack C2 C4"
+      val result = InputParser.parseCommand(input)
+      result should be(Some(Command.Attack(Position(2, 1), Position(2, 3))))
+    }
+
+    "reject an attack command without a target" in {
+      val input = "attack C2"
+      val result = InputParser.parseCommand(input)
+      result should be(None)
+    }
+
+    "reject an attack command with an invalid coordinate" in {
+      val input = "attack C2 Z"
+      val result = InputParser.parseCommand(input)
+      result should be(None)
+    }
   }
