@@ -4,7 +4,6 @@ case class Board(cols: Int, rows: Int, troops: Map[Position, Troop]):
   require(cols > 0 && rows > 0, "A board must have a minimum of one column and one row")
   require(troops.keys.forall(isInside), "All troops must be placed inside the board")
 
-
   def isInside(pos: Position): Boolean =
     pos.col >= 0 && pos.col < cols
       && pos.row >= 0 && pos.row < rows
@@ -13,20 +12,16 @@ case class Board(cols: Int, rows: Int, troops: Map[Position, Troop]):
     troops.get(pos)
 
   def move(from: Position, to: Position): Either[GameError, Board] =
-    troopAt(from) match
-      case None                                                     => Left(GameError.NoTroopThere)
-      case Some(_) if !isInside(to)                                 => Left(GameError.OutOfBounds)
-      case Some(_) if troopAt(to).isDefined                         => Left(GameError.FieldOccupied)
-      case Some(troop) if from.distanceTo(to) > troop.kind.movement => Left(GameError.OutOfRange)
-      case Some(troop)                                              => Right(copy(troops = (troops - from) + (to -> troop)))
+    Rule.firstError(Board.moveRules, this, from, to) match
+      case Some(error) => Left(error)
+      case None        => Right(copy(troops = (troops - from) + (to -> troops(from))))
 
   def attack(from: Position, to: Position, strategy: DamageStrategy): Either[GameError, Board] =
-    (troopAt(from), troopAt(to)) match
-      case (None, _)                                                                                => Left(GameError.NoTroopThere)
-      case (_, None)                                                                                => Left(GameError.NoTarget)
-      case (Some(attacker), Some(defender)) if attacker.owner == defender.owner                     => Left(GameError.OwnTroop)
-      case (Some(attacker), Some(_))        if from.distanceTo(to) > attacker.kind.range            => Left(GameError.OutOfRange)
-      case (Some(attacker), Some(defender))                                                         =>
+    Rule.firstError(Board.attackRules, this, from, to) match
+      case Some(error) => Left(error)
+      case None        =>
+        val attacker = troops(from)
+        val defender = troops(to)
         val causedDamage = strategy.damage(attacker, defender)
         val damagedTroop = defender.takeDamage(causedDamage)
         if damagedTroop.isDefeated then
@@ -35,6 +30,9 @@ case class Board(cols: Int, rows: Int, troops: Map[Position, Troop]):
           Right(copy(troops = troops + (to -> damagedTroop)))
 
 object Board:
+  val moveRules: List[Rule]   = List(TroopAtStart, TargetInside, TargetFree, WithinMovement)
+  val attackRules: List[Rule] = List(TroopAtStart, TargetPresent, TargetIsEnemy, WithinRange)
+
   def initial: Board =
     Board(8, 8, Map(
       // player one
