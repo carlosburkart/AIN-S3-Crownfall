@@ -32,6 +32,12 @@ class Tui(controller: Controller, renderer: Renderer = ColorRenderer()) extends 
       case Some(Input.Attack(from, to)) =>
         handleResult(controller.attack(from, to))
 
+      case Some(Input.Undo) =>
+        handleResult(controller.undo())
+
+      case Some(Input.Redo) =>
+        handleResult(controller.redo())
+
       case Some(Input.Info(pos)) =>
         println()
         controller.board.troopAt(pos) match
@@ -45,6 +51,8 @@ class Tui(controller: Controller, renderer: Renderer = ColorRenderer()) extends 
         println("Commands:")
         println("> move <from> <to>")
         println("> attack <from> <to>")
+        println("> undo")
+        println("> redo")
         println("> info <field>")
         println("> help")
         println("> quit")
@@ -65,14 +73,8 @@ class Tui(controller: Controller, renderer: Renderer = ColorRenderer()) extends 
         println()
         true
       case Right(_) =>
-        controller.state match
-          case GameOver(_) =>
-            println()
-            println("Thank you for playing the demo!")
-            println()
-            false
-          case Turn(_) =>
-            true
+        ()
+    true
 
   // $COVERAGE-OFF$
   @tailrec

@@ -9,6 +9,8 @@ class Controller(initialBoard: Board, strategy: DamageStrategy = RatioDamage) ex
 
   private var currentState: GameState = Turn(Side.One)
 
+  private val undoManager = UndoManager()
+
   def state: GameState = currentState
 
   def board: Board = current
@@ -19,9 +21,21 @@ class Controller(initialBoard: Board, strategy: DamageStrategy = RatioDamage) ex
   def attack(from: Position, to: Position): Either[GameError, Board] =
     act(from, current.attack(from, to, strategy))
 
-  def undo(): Either[GameError, Board] = ???
+  def undo(): Either[GameError, Board] =
+    undoManager.undoStep() match
+      case Some(_) =>
+        notifyObservers()
+        Right(current)
+      case None    =>
+        Left(GameError.NothingToUndo)
 
-  def redo(): Either[GameError, Board] = ???
+  def redo(): Either[GameError, Board] =
+    undoManager.redoStep() match
+      case Some(_) =>
+        notifyObservers()
+        Right(current)
+      case None    =>
+        Left(GameError.NothingToRedo)
 
   private[controller] def snapshot: Snapshot = Snapshot(current, currentState)
 
@@ -39,8 +53,9 @@ class Controller(initialBoard: Board, strategy: DamageStrategy = RatioDamage) ex
         val result = action
         result match
           case Right(newBoard) =>
-            current = newBoard
-            currentState = currentState.next(newBoard)
+            val before = snapshot
+            val after = Snapshot(newBoard, currentState.next(newBoard))
+            undoManager.doStep(ActionCommand(this, before, after))
             notifyObservers()
           case Left(_) =>
             ()

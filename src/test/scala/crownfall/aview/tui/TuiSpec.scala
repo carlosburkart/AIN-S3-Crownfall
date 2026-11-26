@@ -64,13 +64,33 @@ class TuiSpec extends AnyWordSpec with Matchers:
       controller.board should be(board)
     }
 
-    "stop running when the last enemy troop is defeated" in {
+    "keep running after the game is over, so the last action can be undone" in {
       val archer = Troop.create(1, Side.One, TroopKind.Archer)
       val lastEnemy = Troop.create(2, Side.Two, TroopKind.Mage) // 4 hp, 6 * 5 / 6 = 5 damage
       val board = Board(8, 8, Map(Position(0, 1) -> archer, Position(0, 3) -> lastEnemy))
       val controller = Controller(board)
       val tui = Tui(controller)
-      tui.processInput("attack A2 A4") should be(false)
+      tui.processInput("attack A2 A4") should be(true)
+      tui.processInput("undo") should be(true)
+      controller.board should be(board)
+    }
+
+    "undo and redo the last action" in {
+      val troop = Troop.create(1, Side.One, TroopKind.Knight)
+      val board = Board(8, 8, Map(Position(0, 1) -> troop, enemyPos -> enemy))
+      val controller = Controller(board)
+      val tui = Tui(controller)
+      tui.processInput("move A2 A3")
+      tui.processInput("undo") should be(true)
+      controller.board should be(board)
+      tui.processInput("redo") should be(true)
+      controller.board.troopAt(Position(0, 2)) should be(Some(troop))
+    }
+
+    "keep running if there is nothing to undo or redo" in {
+      val tui = Tui(Controller(Board(8, 8, Map(enemyPos -> enemy))))
+      tui.processInput("undo") should be(true)
+      tui.processInput("redo") should be(true)
     }
 
     "keep running after the commands 'info', 'help' or if the command is unknown" in {
