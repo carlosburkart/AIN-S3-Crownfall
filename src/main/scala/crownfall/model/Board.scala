@@ -1,5 +1,7 @@
 package crownfall.model
 
+import scala.util.{Failure, Success, Try}
+
 case class Board(cols: Int, rows: Int, troops: Map[Position, Troop]):
   require(cols > 0 && rows > 0, "A board must have a minimum of one column and one row")
   require(troops.keys.forall(isInside), "All troops must be placed inside the board")
@@ -14,20 +16,27 @@ case class Board(cols: Int, rows: Int, troops: Map[Position, Troop]):
   def move(from: Position, to: Position): Either[GameError, Board] =
     Rule.firstError(Board.moveRules, this, from, to) match
       case Some(error) => Left(error)
-      case None        => Right(copy(troops = (troops - from) + (to -> troops(from))))
+      case None        =>
+        troopAt(from)
+          .toRight(GameError.NoTroopThere)
+          .map(troop => copy(troops = (troops - from) + (to -> troop)))
 
   def attack(from: Position, to: Position, strategy: DamageStrategy): Either[GameError, Board] =
     Rule.firstError(Board.attackRules, this, from, to) match
       case Some(error) => Left(error)
       case None        =>
-        val attacker = troops(from)
-        val defender = troops(to)
-        val causedDamage = strategy.damage(attacker, defender)
-        val damagedTroop = defender.takeDamage(causedDamage)
-        if damagedTroop.isDefeated then
-          Right(copy(troops = troops - to))
-        else
-          Right(copy(troops = troops + (to -> damagedTroop)))
+        for
+          attacker     <- troopAt(from).toRight(GameError.NoTroopThere)
+          defender     <- troopAt(to).toRight(GameError.NoTarget)
+          damagedTroop <- applyDamage(attacker, defender, strategy)
+        yield
+          if damagedTroop.isDefeated then copy(troops = troops - to)
+          else copy(troops = troops + (to -> damagedTroop))
+
+  private def applyDamage(attacker: Troop, defender: Troop, strategy: DamageStrategy): Either[GameError, Troop] =
+    Try(defender.takeDamage(strategy.damage(attacker, defender))) match
+      case Success(damagedTroop) => Right(damagedTroop)
+      case Failure(_) => Left(GameError.InvalidDamage)
 
 object Board:
   val moveRules: List[Rule]   = List(TroopAtStart, TargetInside, TargetFree, WithinMovement)

@@ -66,4 +66,20 @@ class BoardAttackSpec extends AnyWordSpec with Matchers:
       val result = board.attack(attackerPos, targetPos, FixedDamage(1))
       result should be(Left(GameError.OwnTroop))
     }
+
+    "cancel the attack if the strategy returns negative damage" in {
+      val targetPos = Position(3, 5)
+      val board = Board(8, 8, Map(attackerPos -> archer, targetPos -> enemy))
+      val result = board.attack(attackerPos, targetPos, FixedDamage(-1))
+      result should be(Left(GameError.InvalidDamage))
+    }
+
+    "cancel the attack if the strategy fails" in {
+      val failing = new DamageStrategy:
+        def damage(attacker: Troop, defender: Troop): Int = throw IllegalStateException("broken strategy")
+      val targetPos = Position(3, 5)
+      val board = Board(8, 8, Map(attackerPos -> archer, targetPos -> enemy))
+      val result = board.attack(attackerPos, targetPos, failing)
+      result should be(Left(GameError.InvalidDamage))
+    }
   }

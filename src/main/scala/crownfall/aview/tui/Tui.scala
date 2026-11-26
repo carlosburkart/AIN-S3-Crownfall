@@ -79,6 +79,7 @@ class Tui(controller: Controller, renderer: Renderer = ColorRenderer()) extends 
   // $COVERAGE-OFF$
   @tailrec
   final def run(): Unit =
-    val input = StdIn.readLine("> ")
-    if processInput(input) then run()
+    Option(StdIn.readLine("> ")) match
+      case Some(input) => if processInput(input) then run()
+      case None        => println("No input.")
   // $COVERAGE-ON$
