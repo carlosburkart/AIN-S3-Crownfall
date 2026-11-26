@@ -130,4 +130,8 @@ class InputParserSpec extends AnyWordSpec with Matchers:
     "parse the redo command" in {
       InputParser.parseCommand("REDO") should be(Some(Input.Redo))
     }
+
+    "parse the history command" in {
+      InputParser.parseCommand("history") should be(Some(Input.History))
+    }
   }

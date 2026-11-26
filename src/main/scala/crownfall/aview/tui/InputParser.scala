@@ -29,4 +29,5 @@ object InputParser:
           start <- parsePosition(from)
           target <- parsePosition(to)
         yield Input.Attack(start, target)
+      case List("history") => Some(Input.History)
       case _                        => None

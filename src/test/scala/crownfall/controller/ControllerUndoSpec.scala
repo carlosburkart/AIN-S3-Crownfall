@@ -91,4 +91,18 @@ class ControllerUndoSpec extends AnyWordSpec with Matchers:
       controller.redo()
       observer.count should be(0)
     }
+
+    "list the actions with side and fields" in {
+      val controller = Controller(startBoard)
+      controller.move(knightPos, Position(0, 2))
+      controller.move(enemyPos, Position(7, 6))
+      controller.history should be(List("Side One: move A2 -> A3", "Side Two: move H8 -> H7"))
+    }
+
+    "remove an undone action from the history" in {
+      val controller = Controller(startBoard)
+      controller.move(knightPos, Position(0, 2))
+      controller.undo()
+      controller.history should be(Nil)
+    }
   }

@@ -10,6 +10,7 @@ class UndoManagerSpec extends AnyWordSpec with Matchers:
     def doStep(): Unit = log.append(s"do $name;")
     def undoStep(): Unit = log.append(s"undo $name;")
     def redoStep(): Unit = log.append(s"redo $name;")
+    def description: String = name
 
   "An UndoManager" should {
 
@@ -79,5 +80,16 @@ class UndoManagerSpec extends AnyWordSpec with Matchers:
       manager.undoStep()
       manager.doStep(RecordingCommand("b", StringBuilder()))
       manager.redoStep() should be(None)
+    }
+
+    "list the commands that can be undone, the oldest first" in {
+      val manager = UndoManager()
+      val a = RecordingCommand("a", StringBuilder())
+      val b = RecordingCommand("b", StringBuilder())
+      manager.doStep(a)
+      manager.doStep(b)
+      manager.history should be(List(a, b))
+      manager.undoStep()
+      manager.history should be(List(a))
     }
   }

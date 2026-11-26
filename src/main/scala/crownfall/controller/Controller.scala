@@ -16,10 +16,11 @@ class Controller(initialBoard: Board, strategy: DamageStrategy = RatioDamage) ex
   def board: Board = current
 
   def move(from: Position, to: Position): Result[Board] =
-    act(from, current.move(from, to))
+    act(from, s"move ${from.notation} -> ${to.notation}", current.move(from, to))
+
 
   def attack(from: Position, to: Position): Result[Board] =
-    act(from, current.attack(from, to, strategy))
+    act(from, s"attack ${from.notation} -> ${to.notation}", current.attack(from, to, strategy))
 
   def undo(): Result[Board] =
     undoManager.undoStep() match
@@ -37,6 +38,8 @@ class Controller(initialBoard: Board, strategy: DamageStrategy = RatioDamage) ex
       case None    =>
         Err(GameError.NothingToRedo)
 
+  def history: List[String] = undoManager.history.map(command => command.description)
+
   private[controller] def snapshot: Snapshot = Snapshot(current, currentState)
 
   private[controller] def restore(snapshot: Snapshot): Unit =
@@ -46,16 +49,17 @@ class Controller(initialBoard: Board, strategy: DamageStrategy = RatioDamage) ex
   private def turnError(from: Position): Option[GameError] =
     current.troopAt(from).flatMap(troop => currentState.check(troop))
 
-  private def act(from: Position, action: => Result[Board]): Result[Board] =
+  private def act(from: Position, description: String, action: => Result[Board]): Result[Board] =
     turnError(from) match
       case Some(error) => Err(error)
       case None        =>
+        val side = current.troopAt(from).map(troop => s"Side ${troop.owner}: ").getOrElse("")
         val result = action
         result match
           case Ok(newBoard) =>
             val before = snapshot
             val after = Snapshot(newBoard, currentState.next(newBoard))
-            undoManager.doStep(ActionCommand(this, before, after))
+            undoManager.doStep(ActionCommand(this, before, after, side + description))
             notifyObservers()
           case Err(_) =>
             ()

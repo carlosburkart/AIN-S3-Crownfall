@@ -10,3 +10,4 @@ enum Input:
   case Quit
   case Help
   case Info(pos: Position)
+  case History

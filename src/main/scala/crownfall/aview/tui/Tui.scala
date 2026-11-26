@@ -30,7 +30,12 @@ class Tui(controller: Controller, renderer: Renderer = ColorRenderer()) extends 
         handleResult(controller.move(from, to))
 
       case Some(Input.Attack(from, to)) =>
-        handleResult(controller.attack(from, to))
+        val before = controller.board
+        val result = controller.attack(from, to)
+        result match
+          case Ok(after) => println(BoardRenderer.attackReport(before, after, from, to))
+          case Err(_)    => ()
+        handleResult(result)
 
       case Some(Input.Undo) =>
         handleResult(controller.undo())
@@ -54,8 +59,19 @@ class Tui(controller: Controller, renderer: Renderer = ColorRenderer()) extends 
         println("> undo")
         println("> redo")
         println("> info <field>")
+        println("> history")
         println("> help")
         println("> quit")
+        println()
+        true
+
+      case Some(Input.History) =>
+        println()
+        controller.history match
+          case Nil => println("No actions yet.")
+          case actions =>
+            for (action, number) <- actions.zipWithIndex do
+              println(s"${number + 1}. ${action}")
         println()
         true
 
@@ -70,7 +86,6 @@ class Tui(controller: Controller, renderer: Renderer = ColorRenderer()) extends 
       case Err(error) =>
         println()
         println(BoardRenderer.errorMessage(error))
-        println()
         println()
       case Ok(_) =>
         ()

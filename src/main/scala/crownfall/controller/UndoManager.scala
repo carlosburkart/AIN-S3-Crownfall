@@ -26,3 +26,5 @@ class UndoManager:
         redoStack = rest
         undoStack = head :: undoStack
         Some(head)
+        
+  def history: List[Command] = undoStack.reverse

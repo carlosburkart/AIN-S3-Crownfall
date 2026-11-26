@@ -13,3 +13,5 @@ case class Position(col: Int, row: Int):
       dr <- -1 to 1
       if !(dc == 0 && dr == 0)
     yield Position(col + dc, row + dr)
+
+  def notation: String = s"${('A' + col).toChar}${row + 1}"

@@ -102,4 +102,13 @@ class TuiSpec extends AnyWordSpec with Matchers:
       for input <- List("info A2", "info A5", "help", "unknown") do
         tui.processInput(input) should be(true)
     }
+
+    "keep running after the history command" in {
+      val troop = Troop.create(1, Side.One, TroopKind.Knight)
+      val controller = Controller(Board(8, 8, Map(Position(0, 1) -> troop, enemyPos -> enemy)))
+      val tui = Tui(controller)
+      tui.processInput("history") should be(true)
+      tui.processInput("move A2 A3")
+      tui.processInput("history") should be(true)
+    }
   }

@@ -59,4 +59,9 @@ class PositionSpec extends AnyWordSpec with Matchers:
       )
       neigh.toSet should be(neighSet)
     }
+
+    "be written in chess notation" in {
+      Position(0, 1).notation should be("A2")
+      Position(7, 7).notation should be("H8")
+    }
   }

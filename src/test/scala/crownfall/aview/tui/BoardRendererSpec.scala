@@ -73,3 +73,28 @@ class BoardRendererSpec extends AnyWordSpec with Matchers:
       BoardRenderer.stateInfo(Turn(Side.One)) should not be (BoardRenderer.stateInfo(GameOver(Side.One)))
     }
   }
+
+  "The attack report" should {
+
+    val archer = Troop.create(1, Side.One, TroopKind.Archer)
+    val knight = Troop.create(2, Side.Two, TroopKind.Knight)
+    val from = Position(0, 1)
+    val to = Position(0, 3)
+    val boardBefore = Board(8, 8, Map(from -> archer, to -> knight))
+
+    "name the damage and the hit points left" in {
+      val boardAfter = Board(8, 8, Map(from -> archer, to -> knight.copy(hp = 7)))
+      BoardRenderer.attackReport(boardBefore, boardAfter, from, to) should be(
+        "Archer hits Knight for 3 damage. Knight has 7 HP left.")
+    }
+
+    "say when the defender is defeated" in {
+      val boardAfter = Board(8, 8, Map(from -> archer))
+      BoardRenderer.attackReport(boardBefore, boardAfter, from, to) should be("Archer defeats Knight.")
+    }
+
+    "be empty if there was no attacker or defender" in {
+      val emptyBoard = Board(8, 8, Map())
+      BoardRenderer.attackReport(emptyBoard, emptyBoard, from, to) should be("")
+    }
+  }
