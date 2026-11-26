@@ -42,7 +42,7 @@ class ControllerSpec extends AnyWordSpec with Matchers:
       val board = Board(8, 8, Map(start -> troop))
       val controller = Controller(board)
       val result = controller.move(start, target)
-      result.isLeft should be(true)
+      result.isErr should be(true)
     }
 
     "notify observers after a valid move" in {

@@ -43,3 +43,17 @@ object BoardRenderer:
     case GameError.OwnTroop      => "You can't attack your own troops."
     case GameError.NotYourTroop  => "This troop belongs to the other player."
     case GameError.GameIsOver    => "The game is already over."
+    case GameError.NothingToUndo => "There is nothing to undo."
+    case GameError.NothingToRedo => "There is nothing to redo."
+    case GameError.InvalidDamage => "The attack caused invalid damage and was cancelled."
+
+  def attackReport(before: Board, after: Board, from: Position, to: Position): String =
+    (before.troopAt(from), before.troopAt(to)) match
+      case (Some(attacker), Some(defender)) =>
+        after.troopAt(to) match
+          case Some(hit) =>
+            s"${attacker.kind} hits ${defender.kind} for ${defender.hp - hit.hp} damage. " +
+              s"${defender.kind} has ${hit.hp} HP left."
+          case None      =>
+            s"${attacker.kind} defeats ${defender.kind}."
+      case _ => ""

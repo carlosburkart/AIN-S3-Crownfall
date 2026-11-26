@@ -43,14 +43,14 @@ class ControllerAttackSpec extends AnyWordSpec with Matchers:
     "not attack with a troop of the side that is not on turn" in {
       val controller = Controller(board, FixedDamage(1))
       val result = controller.attack(enemyPos, archerPos)
-      result should be(Left(GameError.NotYourTroop))
+      result should be(Err(GameError.NotYourTroop))
       controller.board should be(board)
     }
 
     "keep the board and the turn after an invalid attack" in {
       val controller = Controller(board, FixedDamage(1))
       val result = controller.attack(archerPos, Position(5, 5))
-      result should be(Left(GameError.NoTarget))
+      result should be(Err(GameError.NoTarget))
       controller.board should be(board)
       controller.state should be(Turn(Side.One))
     }

@@ -1,10 +1,7 @@
 package crownfall.controller
 
-import crownfall.model.*
-
-enum Command:
-  case Move(from: Position, to: Position)
-  case Attack(from: Position, to: Position)
-  case Quit
-  case Help
-  case Info(pos: Position)
+trait Command:
+  def doStep(): Unit
+  def undoStep(): Unit
+  def redoStep(): Unit
+  def description: String

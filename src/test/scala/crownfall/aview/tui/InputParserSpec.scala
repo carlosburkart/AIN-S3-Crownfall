@@ -54,13 +54,13 @@ class InputParserSpec extends AnyWordSpec with Matchers:
     "parse a move command with two coordinates" in {
       val input = "move C2 C3"
       val result = InputParser.parseCommand(input)
-      result should be(Some(Command.Move(Position(2, 1), Position(2, 2))))
+      result should be(Some(Input.Move(Position(2, 1), Position(2, 2))))
     }
 
     "parse the quit command" in {
       val input = "quit"
       val result = InputParser.parseCommand(input)
-      result should be(Some(Command.Quit))
+      result should be(Some(Input.Quit))
     }
 
     "reject a move command without a target" in {
@@ -84,13 +84,13 @@ class InputParserSpec extends AnyWordSpec with Matchers:
     "ignore upper and lower case in commands" in {
       val input = "MOVE C2 C3"
       val result = InputParser.parseCommand(input)
-      result should be(Some(Command.Move(Position(2, 1), Position(2, 2))))
+      result should be(Some(Input.Move(Position(2, 1), Position(2, 2))))
     }
 
     "parse an info command with a coordinate" in {
       val input = "info C2"
       val result = InputParser.parseCommand(input)
-      result should be(Some(Command.Info(Position(2, 1))))
+      result should be(Some(Input.Info(Position(2, 1))))
     }
 
     "reject an info command with an invalid coordinate" in {
@@ -102,13 +102,13 @@ class InputParserSpec extends AnyWordSpec with Matchers:
     "parse a help command" in {
       val input = "help"
       val result = InputParser.parseCommand(input)
-      result should be(Some(Command.Help))
+      result should be(Some(Input.Help))
     }
 
     "parse an attack command with two coordinates" in {
       val input = "attack C2 C4"
       val result = InputParser.parseCommand(input)
-      result should be(Some(Command.Attack(Position(2, 1), Position(2, 3))))
+      result should be(Some(Input.Attack(Position(2, 1), Position(2, 3))))
     }
 
     "reject an attack command without a target" in {
@@ -121,5 +121,17 @@ class InputParserSpec extends AnyWordSpec with Matchers:
       val input = "attack C2 Z"
       val result = InputParser.parseCommand(input)
       result should be(None)
+    }
+
+    "parse the undo command" in {
+      InputParser.parseCommand("undo") should be(Some(Input.Undo))
+    }
+
+    "parse the redo command" in {
+      InputParser.parseCommand("REDO") should be(Some(Input.Redo))
+    }
+
+    "parse the history command" in {
+      InputParser.parseCommand("history") should be(Some(Input.History))
     }
   }

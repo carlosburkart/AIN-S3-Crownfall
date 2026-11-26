@@ -1,6 +1,6 @@
 package crownfall.aview.tui
 
-import crownfall.controller.Command
+import crownfall.controller.Input
 import crownfall.controller.Controller
 import crownfall.util.Observer
 import crownfall.model.*
@@ -20,19 +20,30 @@ class Tui(controller: Controller, renderer: Renderer = ColorRenderer()) extends 
 
   def processInput(input: String): Boolean =
     InputParser.parseCommand(input) match
-      case Some(Command.Quit) =>
+      case Some(Input.Quit) =>
         println()
         println("Thank you for playing the demo!")
         println()
         false
 
-      case Some(Command.Move(from, to)) =>
+      case Some(Input.Move(from, to)) =>
         handleResult(controller.move(from, to))
 
-      case Some(Command.Attack(from, to)) =>
-        handleResult(controller.attack(from, to))
+      case Some(Input.Attack(from, to)) =>
+        val before = controller.board
+        val result = controller.attack(from, to)
+        result match
+          case Ok(after) => println(BoardRenderer.attackReport(before, after, from, to))
+          case Err(_)    => ()
+        handleResult(result)
 
-      case Some(Command.Info(pos)) =>
+      case Some(Input.Undo) =>
+        handleResult(controller.undo())
+
+      case Some(Input.Redo) =>
+        handleResult(controller.redo())
+
+      case Some(Input.Info(pos)) =>
         println()
         controller.board.troopAt(pos) match
           case Some(troop) => println(BoardRenderer.troopInfo(troop))
@@ -40,14 +51,27 @@ class Tui(controller: Controller, renderer: Renderer = ColorRenderer()) extends 
         println()
         true
 
-      case Some(Command.Help) =>
+      case Some(Input.Help) =>
         println()
         println("Commands:")
         println("> move <from> <to>")
         println("> attack <from> <to>")
+        println("> undo")
+        println("> redo")
         println("> info <field>")
+        println("> history")
         println("> help")
         println("> quit")
+        println()
+        true
+
+      case Some(Input.History) =>
+        println()
+        controller.history match
+          case Nil => println("No actions yet.")
+          case actions =>
+            for (action, number) <- actions.zipWithIndex do
+              println(s"${number + 1}. ${action}")
         println()
         true
 
@@ -57,26 +81,20 @@ class Tui(controller: Controller, renderer: Renderer = ColorRenderer()) extends 
         println()
         true
         
-  private def handleResult(result: Either[GameError, Board]): Boolean =
+  private def handleResult(result: Result[Board]): Boolean =
     result match
-      case Left(error) =>
+      case Err(error) =>
         println()
         println(BoardRenderer.errorMessage(error))
         println()
-        true
-      case Right(_) =>
-        controller.state match
-          case GameOver(_) =>
-            println()
-            println("Thank you for playing the demo!")
-            println()
-            false
-          case Turn(_) =>
-            true
+      case Ok(_) =>
+        ()
+    true
 
   // $COVERAGE-OFF$
   @tailrec
   final def run(): Unit =
-    val input = StdIn.readLine("> ")
-    if processInput(input) then run()
+    Option(StdIn.readLine("> ")) match
+      case Some(input) => if processInput(input) then run()
+      case None        => println("Input ended, game is terminated.")
   // $COVERAGE-ON$
