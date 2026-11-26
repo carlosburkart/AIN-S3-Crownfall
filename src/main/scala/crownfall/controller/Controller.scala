@@ -19,6 +19,16 @@ class Controller(initialBoard: Board, strategy: DamageStrategy = RatioDamage) ex
   def attack(from: Position, to: Position): Either[GameError, Board] =
     act(from, current.attack(from, to, strategy))
 
+  def undo(): Either[GameError, Board] = ???
+
+  def redo(): Either[GameError, Board] = ???
+
+  private[controller] def snapshot: Snapshot = Snapshot(current, currentState)
+
+  private[controller] def restore(snapshot: Snapshot): Unit =
+    current = snapshot.board
+    currentState = snapshot.state
+
   private def turnError(from: Position): Option[GameError] =
     current.troopAt(from).flatMap(troop => currentState.check(troop))
 

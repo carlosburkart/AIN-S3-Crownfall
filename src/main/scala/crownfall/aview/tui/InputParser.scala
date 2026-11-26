@@ -1,6 +1,6 @@
 package crownfall.aview.tui
 
-import crownfall.controller.Command
+import crownfall.controller.Input
 import crownfall.model.Position
 
 object InputParser:
@@ -12,19 +12,21 @@ object InputParser:
       case Coordinate(letter, number) => Some(Position(letter.toUpperCase.head - 'A', number.toInt - 1))
       case _                          => None
 
-  def parseCommand(input: String): Option[Command] =
+  def parseCommand(input: String): Option[Input] =
     input.trim.toLowerCase.split("\\s+").toList match
-      case List("quit")             => Some(Command.Quit)
-      case List("info", pos)        => parsePosition(pos).map(p => Command.Info(p))
-      case List("help")             => Some(Command.Help)
+      case List("quit")             => Some(Input.Quit)
+      case List("info", pos)        => parsePosition(pos).map(p => Input.Info(p))
+      case List("help")             => Some(Input.Help)
+      case List("undo")             => Some(Input.Undo)
+      case List("redo")             => Some(Input.Redo)
       case List("move", from, to)   =>
         for
           start  <- parsePosition(from)
           target <- parsePosition(to)
-        yield Command.Move(start, target)
+        yield Input.Move(start, target)
       case List("attack", from, to) =>
         for
           start <- parsePosition(from)
           target <- parsePosition(to)
-        yield Command.Attack(start, target)
+        yield Input.Attack(start, target)
       case _                        => None

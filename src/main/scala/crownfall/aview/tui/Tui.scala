@@ -1,6 +1,6 @@
 package crownfall.aview.tui
 
-import crownfall.controller.Command
+import crownfall.controller.Input
 import crownfall.controller.Controller
 import crownfall.util.Observer
 import crownfall.model.*
@@ -20,19 +20,19 @@ class Tui(controller: Controller, renderer: Renderer = ColorRenderer()) extends 
 
   def processInput(input: String): Boolean =
     InputParser.parseCommand(input) match
-      case Some(Command.Quit) =>
+      case Some(Input.Quit) =>
         println()
         println("Thank you for playing the demo!")
         println()
         false
 
-      case Some(Command.Move(from, to)) =>
+      case Some(Input.Move(from, to)) =>
         handleResult(controller.move(from, to))
 
-      case Some(Command.Attack(from, to)) =>
+      case Some(Input.Attack(from, to)) =>
         handleResult(controller.attack(from, to))
 
-      case Some(Command.Info(pos)) =>
+      case Some(Input.Info(pos)) =>
         println()
         controller.board.troopAt(pos) match
           case Some(troop) => println(BoardRenderer.troopInfo(troop))
@@ -40,7 +40,7 @@ class Tui(controller: Controller, renderer: Renderer = ColorRenderer()) extends 
         println()
         true
 
-      case Some(Command.Help) =>
+      case Some(Input.Help) =>
         println()
         println("Commands:")
         println("> move <from> <to>")

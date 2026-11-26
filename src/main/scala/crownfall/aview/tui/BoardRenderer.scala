@@ -43,3 +43,6 @@ object BoardRenderer:
     case GameError.OwnTroop      => "You can't attack your own troops."
     case GameError.NotYourTroop  => "This troop belongs to the other player."
     case GameError.GameIsOver    => "The game is already over."
+    case GameError.NothingToUndo => "There is nothing to undo."
+    case GameError.NothingToRedo => "There is nothing to redo."
+    case GameError.InvalidDamage => "The attack caused invalid damage and was cancelled."
