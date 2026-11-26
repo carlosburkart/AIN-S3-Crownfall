@@ -15,27 +15,27 @@ class Controller(initialBoard: Board, strategy: DamageStrategy = RatioDamage) ex
 
   def board: Board = current
 
-  def move(from: Position, to: Position): Either[GameError, Board] =
+  def move(from: Position, to: Position): Result[Board] =
     act(from, current.move(from, to))
 
-  def attack(from: Position, to: Position): Either[GameError, Board] =
+  def attack(from: Position, to: Position): Result[Board] =
     act(from, current.attack(from, to, strategy))
 
-  def undo(): Either[GameError, Board] =
+  def undo(): Result[Board] =
     undoManager.undoStep() match
       case Some(_) =>
         notifyObservers()
-        Right(current)
+        Ok(current)
       case None    =>
-        Left(GameError.NothingToUndo)
+        Err(GameError.NothingToUndo)
 
-  def redo(): Either[GameError, Board] =
+  def redo(): Result[Board] =
     undoManager.redoStep() match
       case Some(_) =>
         notifyObservers()
-        Right(current)
+        Ok(current)
       case None    =>
-        Left(GameError.NothingToRedo)
+        Err(GameError.NothingToRedo)
 
   private[controller] def snapshot: Snapshot = Snapshot(current, currentState)
 
@@ -46,17 +46,17 @@ class Controller(initialBoard: Board, strategy: DamageStrategy = RatioDamage) ex
   private def turnError(from: Position): Option[GameError] =
     current.troopAt(from).flatMap(troop => currentState.check(troop))
 
-  private def act(from: Position, action: => Either[GameError, Board]): Either[GameError, Board] =
+  private def act(from: Position, action: => Result[Board]): Result[Board] =
     turnError(from) match
-      case Some(error) => Left(error)
+      case Some(error) => Err(error)
       case None        =>
         val result = action
         result match
-          case Right(newBoard) =>
+          case Ok(newBoard) =>
             val before = snapshot
             val after = Snapshot(newBoard, currentState.next(newBoard))
             undoManager.doStep(ActionCommand(this, before, after))
             notifyObservers()
-          case Left(_) =>
+          case Err(_) =>
             ()
         result

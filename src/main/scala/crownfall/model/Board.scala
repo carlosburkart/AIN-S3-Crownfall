@@ -1,6 +1,6 @@
 package crownfall.model
 
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 case class Board(cols: Int, rows: Int, troops: Map[Position, Troop]):
   require(cols > 0 && rows > 0, "A board must have a minimum of one column and one row")
@@ -13,30 +13,24 @@ case class Board(cols: Int, rows: Int, troops: Map[Position, Troop]):
   def troopAt(pos: Position): Option[Troop] =
     troops.get(pos)
 
-  def move(from: Position, to: Position): Either[GameError, Board] =
+  def move(from: Position, to: Position): Result[Board] =
     Rule.firstError(Board.moveRules, this, from, to) match
-      case Some(error) => Left(error)
-      case None        =>
-        troopAt(from)
-          .toRight(GameError.NoTroopThere)
+      case Some(error) => Err(error)
+      case None        => 
+        Result.fromOption(troopAt(from), GameError.NoTroopThere)
           .map(troop => copy(troops = (troops - from) + (to -> troop)))
 
-  def attack(from: Position, to: Position, strategy: DamageStrategy): Either[GameError, Board] =
+  def attack(from: Position, to: Position, strategy: DamageStrategy): Result[Board] =
     Rule.firstError(Board.attackRules, this, from, to) match
-      case Some(error) => Left(error)
+      case Some(error) => Err(error)
       case None        =>
         for
-          attacker     <- troopAt(from).toRight(GameError.NoTroopThere)
-          defender     <- troopAt(to).toRight(GameError.NoTarget)
-          damagedTroop <- applyDamage(attacker, defender, strategy)
+          attacker     <- Result.fromOption(troopAt(from), GameError.NoTroopThere)
+          defender     <- Result.fromOption(troopAt(to), GameError.NoTarget)
+          damagedTroop <- Result.fromTry(Try(defender.takeDamage(strategy.damage(attacker, defender))), GameError.InvalidDamage)
         yield
           if damagedTroop.isDefeated then copy(troops = troops - to)
           else copy(troops = troops + (to -> damagedTroop))
-
-  private def applyDamage(attacker: Troop, defender: Troop, strategy: DamageStrategy): Either[GameError, Troop] =
-    Try(defender.takeDamage(strategy.damage(attacker, defender))) match
-      case Success(damagedTroop) => Right(damagedTroop)
-      case Failure(_) => Left(GameError.InvalidDamage)
 
 object Board:
   val moveRules: List[Rule]   = List(TroopAtStart, TargetInside, TargetFree, WithinMovement)

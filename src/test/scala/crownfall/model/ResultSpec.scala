@@ -116,3 +116,13 @@ class ResultSpec extends AnyWordSpec with Matchers:
         m.flatMap(f).flatMap(g) should be(m.flatMap(x => f(x).flatMap(g)))
     }
   }
+
+  "isOk and isErr" should {
+
+    "tell an Ok and an Err apart" in {
+      okValue.isOk should be(true)
+      okValue.isErr should be(false)
+      errValue.isOk should be(false)
+      errValue.isErr should be(true)
+    }
+}

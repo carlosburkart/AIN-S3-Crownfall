@@ -65,14 +65,14 @@ class Tui(controller: Controller, renderer: Renderer = ColorRenderer()) extends 
         println()
         true
         
-  private def handleResult(result: Either[GameError, Board]): Boolean =
+  private def handleResult(result: Result[Board]): Boolean =
     result match
-      case Left(error) =>
+      case Err(error) =>
         println()
         println(BoardRenderer.errorMessage(error))
         println()
-        true
-      case Right(_) =>
+        println()
+      case Ok(_) =>
         ()
     true
 
@@ -81,5 +81,5 @@ class Tui(controller: Controller, renderer: Renderer = ColorRenderer()) extends 
   final def run(): Unit =
     Option(StdIn.readLine("> ")) match
       case Some(input) => if processInput(input) then run()
-      case None        => println("No input.")
+      case None        => println("Input ended, game is terminated.")
   // $COVERAGE-ON$

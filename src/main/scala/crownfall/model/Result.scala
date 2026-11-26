@@ -16,7 +16,14 @@ sealed trait Result[+A]:
   def filter(p: A => Boolean, error: GameError): Result[A] =
     this match
       case Ok(value)  => if p(value) then Ok(value) else Err(error)
-      case Err(e) => Err(e)
+      case Err(e)     => Err(e)
+
+  def isOk: Boolean =
+    this match
+      case Ok(_)  => true
+      case Err(_) => false
+
+  def isErr: Boolean = !isOk
 
 case class Ok[+A](value: A) extends Result[A]
 case class Err(error: GameError) extends Result[Nothing]

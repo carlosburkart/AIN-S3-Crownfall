@@ -19,7 +19,7 @@ class ControllerUndoSpec extends AnyWordSpec with Matchers:
     "undo a move" in {
       val controller = Controller(startBoard)
       controller.move(knightPos, Position(0, 2))
-      controller.undo() should be(Right(startBoard))
+      controller.undo() should be(Ok(startBoard))
       controller.board should be(startBoard)
     }
 
@@ -35,7 +35,7 @@ class ControllerUndoSpec extends AnyWordSpec with Matchers:
       controller.move(knightPos, Position(0, 2))
       val afterMove = controller.board
       controller.undo()
-      controller.redo() should be(Right(afterMove))
+      controller.redo() should be(Ok(afterMove))
       controller.state should be(Turn(Side.Two))
     }
 
@@ -52,17 +52,17 @@ class ControllerUndoSpec extends AnyWordSpec with Matchers:
     }
 
     "report that there is nothing to undo at the start" in {
-      Controller(startBoard).undo() should be(Left(GameError.NothingToUndo))
+      Controller(startBoard).undo() should be(Err(GameError.NothingToUndo))
     }
 
     "report that there is nothing to redo at the start" in {
-      Controller(startBoard).redo() should be(Left(GameError.NothingToRedo))
+      Controller(startBoard).redo() should be(Err(GameError.NothingToRedo))
     }
 
     "not remember an action that failed" in {
       val controller = Controller(startBoard)
       controller.move(knightPos, Position(-1, 1))
-      controller.undo() should be(Left(GameError.NothingToUndo))
+      controller.undo() should be(Err(GameError.NothingToUndo))
     }
 
     "forget the undone actions after a new action" in {
@@ -70,7 +70,7 @@ class ControllerUndoSpec extends AnyWordSpec with Matchers:
       controller.move(knightPos, Position(0, 2))
       controller.undo()
       controller.move(knightPos, Position(1, 2))
-      controller.redo() should be(Left(GameError.NothingToRedo))
+      controller.redo() should be(Err(GameError.NothingToRedo))
     }
 
     "notify observers after undo and redo" in {

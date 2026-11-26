@@ -41,7 +41,7 @@ class ControllerTurnSpec extends AnyWordSpec with Matchers:
     "not move a troop of the side that is not on turn" in {
       val controller = Controller(bothSides)
       val result = controller.move(posTwo, Position(7, 5))
-      result should be(Left(GameError.NotYourTroop))
+      result should be(Err(GameError.NotYourTroop))
       controller.board should be(bothSides)
       controller.state should be(Turn(Side.One))
     }
@@ -58,6 +58,6 @@ class ControllerTurnSpec extends AnyWordSpec with Matchers:
       val controller = Controller(onlyOne)
       controller.move(posOne, Position(0, 2))
       val result = controller.move(Position(0, 2), Position(0, 3))
-      result should be(Left(GameError.GameIsOver))
+      result should be(Err(GameError.GameIsOver))
     }
   }
