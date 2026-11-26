@@ -94,7 +94,10 @@ Uppercase and lowercase letters are both accepted.
 |---|---|
 | `move C2 C3` | Moves the troop on C2 to C3 |
 | `attack C2 C3` | The troop on C2 attacks the troop on C3 |
+| `undo` | Takes back the last action |
+| `redo` | Repeats the last undone action |
 | `info C2` | Shows the stats of the troop on C2 |
+| `history` | Lists all actions that can be undone |
 | `help` | Lists all commands |
 | `quit` | Ends the game |
 
@@ -125,8 +128,14 @@ The attacker stays on its field. The damage depends on the attack of the attacke
 damage = attack × 5 / (defense + 5)
 ```
 A defense of 5 halves the damage. A troop whose hit points drop to 0 is removed from the board.
+After every attack, the game reports the damage and the hit points left.
 
 If an attack is not allowed, the game shows the reason and you can try again.
+
+### Winning
+
+The game ends as soon as one side has no troops left. The other side wins. 
+Afterwards, the last action can still be undone with `undo`.
 
 ## Current State
 
@@ -137,7 +146,7 @@ If an attack is not allowed, the game shows the reason and you can try again.
 | Text user interface | Done |
 | Combat (melee and ranged) | Done |
 | Turns and win condition | Done |
- Undo | Planned |
+ Undo, redo and history | Done |
 | Terrain | Planned |
 | Buildings to train and upgrade troops | Planned |
 | Graphical user interface with pixel art tiles | Planned |
@@ -148,7 +157,8 @@ If an attack is not allowed, the game shows the reason and you can try again.
 
 Crownfall uses a layered MVC architecture with the observer pattern.
 The model is immutable, and the layer rules are checked automatically by tests.
-Besides the observer pattern, the code uses Strategy, State, Template Method and Chain of Responsibility.
+Besides the observer pattern, the code uses Strategy, State, Template Method, 
+Chain of Responsibility and Command. Game actions return the own monad `Result`.
 
 ```text
 src/main/scala/crownfall/
